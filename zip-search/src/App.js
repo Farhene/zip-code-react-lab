@@ -2,12 +2,15 @@ import React, { Component } from 'react';
 import './App.css';
 
 
-function City(props) {
+function City({city}) {
   //could I perhaps populate cities here? Maybe Ill do it in the App class
+  if(city.length > 0){
+    console.log("yes");
+  }
   return (
   <div>
     <ul>
-      <li>City name: {props.city}</li>
+      <li>City name: {city}</li>
     </ul>
   </div>
   );
@@ -60,10 +63,10 @@ class App extends Component {
       .then(response => response.json)
       .then(result => {
             this.setState({
-              cities: result
+              'cities': result
             });
-          console.log("finished loading cities");
-          console.log(result); 
+          //console.log("finished loading cities");
+          //console.log(result); 
           //shows I got the json file which is put into the cities array
         },
         
@@ -99,8 +102,8 @@ class App extends Component {
   render() {
     // here I can populate cities into an array
     //the cities doesnt seem to be fetching properly
-    console.log(this.state.cities.length + " Length of city array");
-    const cities_ = this.state.cities
+   // console.log(this.state.cities.length + " Length of city array");
+    const cities_ = this.state.cities;
     var city_array = [];
 
     for(var i = 0; i < cities_.length; i++){
@@ -129,11 +132,12 @@ class App extends Component {
           <h5> The Cities in the Following Zipcode are: </h5>
         </div>
         <div>
-            { 
+          <City city={this.state.cities} />
+            {/* 
               city_array.length === 0 
               ? <div style={zipStyle}> No cities found </div>
               : <div style={zipStyle}> city_array </div>
-            }        
+            */}        
         </div>
       </div>
     );
