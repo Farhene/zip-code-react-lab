@@ -20,7 +20,7 @@ function City(props) {
   );
 }
 
-function ZipSearchField( {onZipChange /*, onZipSubmit*/}) {
+function ZipSearchField( {onZipChange}) {
   return (
     <div style={{marginTop: "20px"}}>
      <form style={{display: "flex"}}>
@@ -67,7 +67,10 @@ class App extends Component {
         
       )
        .catch( err => {
-         console.log(`Failed: ${err}`)
+         console.log(`Failed: ${err}`);
+         this.setState({
+          cities: []
+         });
       })
     }
 
@@ -126,7 +129,11 @@ class App extends Component {
             {
               city_array.length === 0
               ? <div style={zipStyle}> No cities found </div>
-              : <div style={zipStyle, {display: "flex"}}> {city_array} </div>
+              : <div style={zipStyle, {display: "flex", marginLeft: "10%"}} className="column"> 
+                  <div className="row" style={{marginLeft: "5%"}}>
+                    {city_array} 
+                  </div>
+                </div>
             }        
         </div>
       </div>
