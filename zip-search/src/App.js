@@ -4,10 +4,18 @@ import './App.css';
 
 function City(props) {
   return (
-  <div>
-    <ul>
-      <li>City name: {props.city}</li>
-    </ul>
+  <div className="card mb-4">
+      <div style={{margin: "10px" }} className="background card-header">
+        City name: {props.city}
+      </div>
+      <ul className="">
+        <li>State name: {props.state} </li>
+        <li>Record Number: {props.record} </li>
+        <li>Estimated Population: {props.pop}</li>
+        <li>Tax Returns Filed: {props.tax}</li>
+        <li>Total Wages: {props.wages}</li>
+        <li>Notes: {props.notes}</li>
+      </ul>
   </div>
   );
 }
@@ -21,6 +29,8 @@ function ZipSearchField( {onZipChange /*, onZipSubmit*/}) {
         onChange={onZipChange}
         type="text"
         placeholder = "Enter 5 digit Zipcode"
+        pattern="[0-9]{5}"
+        //maxLength="5"
       />
     </form>
     </div>
@@ -59,7 +69,13 @@ class App extends Component {
        .catch( err => {
          console.log(`Failed: ${err}`)
       })
-    }    
+    }
+
+    else if(zip.length < 5 || zip.length > 5){
+      this.setState({
+        cities: []
+      });
+    }
 
     this.setState({
       zipCode: zip
@@ -69,14 +85,22 @@ class App extends Component {
 
   render() {
     // here I can populate cities into an array
-    //the cities doesnt seem to be fetching properly
-    console.log(this.state.cities.length + " Length of city array");
-    const cities_ = this.state.cities;
+    //the cities doesnt seem to be fetching properly    
     var city_array = [];
+    const zip = this.state.zipCode;
 
-    for(var i = 0; i < cities_.length; i++){
-      var index = cities_[i];
-      city_array.push( <City city={index["City"]} /> );
+    for(var i = 0; i < this.state.cities.length; i++){
+      city_array.push( 
+        <City 
+          city={this.state.cities[i]["City"]} 
+          state={this.state.cities[i]["State"]}
+          record={this.state.cities[i]["RecordNumber"]}
+          notes={this.state.cities[i]["Notes"]}
+          tax={this.state.cities[i]["TaxReturnsFiled"]}
+          pop={this.state.cities[i]["EstimatedPopulation"]}
+          wages={this.state.cities[i]["TotalWages"]}
+        /> 
+      );
     }
     
     const zipStyle = {
@@ -100,9 +124,9 @@ class App extends Component {
         </div>
         <div>
             {
-              city_array.length === 0 
+              city_array.length === 0
               ? <div style={zipStyle}> No cities found </div>
-              : <div style={zipStyle}> {city_array} </div>
+              : <div style={zipStyle, {display: "flex"}}> {city_array} </div>
             }        
         </div>
       </div>
