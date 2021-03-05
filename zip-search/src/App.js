@@ -3,6 +3,7 @@ import './App.css';
 
 
 function City(props) {
+  //could I perhaps populate cities here? Maybe Ill do it in the App class
   return (
   <div>
     <ul>
@@ -12,7 +13,7 @@ function City(props) {
   );
 }
 
-function ZipSearchField( {onZipChange , onZipSubmit}) {
+function ZipSearchField( {onZipChange /*, onZipSubmit*/}) {
   return (
     <div>
      <form style={{ display: "flex", margin: "50px"}} >
@@ -22,11 +23,13 @@ function ZipSearchField( {onZipChange , onZipSubmit}) {
         type="text"
         placeholder = "Enter 5 digit Zipcode"
       />
+      {/*
       <input 
         type="submit" 
         onSubmit={onZipSubmit} 
         className="btn btn-secondary"
       />
+      */}
     </form>
     </div>
   );
@@ -40,9 +43,8 @@ class App extends Component {
       zipCode: "",
       cities: [],
     }
-
     this.zipChanged = this.zipChanged.bind(this);
-    this.zipSubmit = this.zipSubmit.bind(this);
+    //this.zipSubmit = this.zipSubmit.bind(this);
   }
 
   zipChanged(e) {
@@ -52,9 +54,28 @@ class App extends Component {
       zipCode: e.target.value
     });
 
-    console.log(this.state.zipCode);
+    if(e.target.value.length === 5){
+      console.log(e.target.value);
+      fetch(`http://ctp-zip-api.herokuapp.com/zip/${e.target.value}`)
+      .then(response => response.json)
+      .then(result => {
+            this.setState({
+              cities: result
+            });
+          console.log("finished loading cities");
+          console.log(result); 
+          //shows I got the json file which is put into the cities array
+        },
+        
+      )
+       .catch( err => {
+         console.log(`Failed: ${err}`)
+      })
+    }
+    
   }
 
+  /*
   zipSubmit(e) {
     alert('You pressed submit for: ' + this.state.zipCode);
     e.preventDefault();
@@ -62,23 +83,29 @@ class App extends Component {
       fetch('http://ctp-zip-api.herokuapp.com/zip/' + this.state.zipCode)
       .then(response => response.json)
       .then(result => {
-          console.log(result["City"]);
           this.setState({
             cities: result
           })
         }
       )
+      .catch( err => {
+        console.log(`Failed: ${err}`)
+      })
     }
+    return;
   }
+  */
 
   render() {
-    // here I can populate cities into a array
+    // here I can populate cities into an array
+    //the cities doesnt seem to be fetching properly
+    console.log(this.state.cities.length + " Length of city array");
     const cities_ = this.state.cities
     var city_array = [];
 
     for(var i = 0; i < cities_.length; i++){
-      //console.log(cities_[i]);
-      city_array.push( <City city={cities_[i]["City"]} /> )
+      var index = cities_[i];
+      city_array.push( <City city={index["City"]} /> );
     }
     
     const zipStyle = {
@@ -95,14 +122,18 @@ class App extends Component {
         <div style={zipStyle}>
           <ZipSearchField 
             onZipChange={ (e) => this.zipChanged(e)} 
-            onZipSubmit={ (e) => this.zipSubmit(e) }
+            //onZipSubmit={ (e) => this.zipSubmit(e) }
           />
         </div>
         <div style={zipStyle}>
           <h5> The Cities in the Following Zipcode are: </h5>
         </div>
         <div>
-            {city_array}        
+            { 
+              city_array.length === 0 
+              ? <div style={zipStyle}> No cities found </div>
+              : <div style={zipStyle}> city_array </div>
+            }        
         </div>
       </div>
     );
